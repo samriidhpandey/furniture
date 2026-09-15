@@ -87,12 +87,7 @@ export default async function HomePage() {
             <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#121214] via-[#121214]/75 to-transparent backdrop-blur-[2px]" />
           </div>
 
-          <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20 sm:py-28">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#C5A880]/70 bg-[#161619]/90 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium shadow-lg">
-              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>The 2026 Sovereign Atelier Archive</span>
-            </div>
-
+          <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-24 sm:py-36">
             <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight text-white leading-[1.1] max-w-4xl mx-auto drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
               Masterpieces in <span className="italic font-normal text-[#D4AF37]">Living Form</span>
             </h1>
@@ -102,10 +97,10 @@ export default async function HomePage() {
               hardwood joinery. Handcrafted for the world&apos;s most distinguished residences.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/catalog"
-                className="w-full sm:w-auto px-8 py-4 bg-[#C5A880] text-charcoal font-semibold text-xs uppercase tracking-[0.25em] hover:bg-[#D4AF37] transition-all shadow-[0_4px_20px_rgba(212,175,55,0.25)] flex items-center justify-center gap-3 border border-[#D4AF37]"
+                className="w-full sm:w-auto px-9 py-4 bg-[#C5A880] text-charcoal font-semibold text-xs uppercase tracking-[0.25em] hover:bg-[#D4AF37] transition-all shadow-[0_4px_20px_rgba(212,175,55,0.25)] flex items-center justify-center gap-3 border border-[#D4AF37]"
               >
                 <span>Explore Collection</span>
                 <ArrowRight className="w-4 h-4" />
@@ -113,51 +108,20 @@ export default async function HomePage() {
 
               <Link
                 href="/contact-us"
-                className="w-full sm:w-auto px-8 py-4 border border-[#C5A880]/60 bg-[#161619]/80 text-cream text-xs uppercase tracking-[0.25em] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all backdrop-blur-md flex items-center justify-center font-medium shadow-sm"
+                className="w-full sm:w-auto px-9 py-4 border border-[#C5A880]/70 bg-[#161619]/80 text-cream text-xs uppercase tracking-[0.25em] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all backdrop-blur-md flex items-center justify-center font-medium shadow-sm"
               >
                 <span>Book Salon Viewing</span>
               </Link>
             </div>
-
-            {/* Quick Pillars (Vintage Gold Filigree Glassmorphic Cards) */}
-            <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 border-t border-[#C5A880]/30 text-left">
-              <div className="p-4 bg-[#161619]/85 backdrop-blur-md border-2 border-[#C5A880]/30 hover:border-[#D4AF37] rounded-xs shadow-md transition-all relative group overflow-hidden">
-                <OrnateCardCorners color="#C5A880" size={14} />
-                <div className="absolute inset-1 border border-[#C5A880]/15 pointer-events-none group-hover:border-[#D4AF37]/30 transition-colors" />
-                <p className="font-serif text-base sm:text-lg text-cream font-semibold group-hover:text-[#D4AF37] transition-colors relative z-10">Bespoke Curation</p>
-                <p className="text-xs text-cream/75 mt-0.5 relative z-10">Custom sizing & rare marble selection</p>
-              </div>
-              <div className="p-4 bg-[#161619]/85 backdrop-blur-md border-2 border-[#C5A880]/30 hover:border-[#D4AF37] rounded-xs shadow-md transition-all relative group overflow-hidden">
-                <OrnateCardCorners color="#C5A880" size={14} />
-                <div className="absolute inset-1 border border-[#C5A880]/15 pointer-events-none group-hover:border-[#D4AF37]/30 transition-colors" />
-                <p className="font-serif text-base sm:text-lg text-cream font-semibold group-hover:text-[#D4AF37] transition-colors relative z-10">White-Glove Pan-India</p>
-                <p className="text-xs text-cream/75 mt-0.5 relative z-10">Complimentary assembly & debris removal</p>
-              </div>
-              <div className="p-4 bg-[#161619]/85 backdrop-blur-md border-2 border-[#C5A880]/30 hover:border-[#D4AF37] rounded-xs shadow-md transition-all relative group overflow-hidden">
-                <OrnateCardCorners color="#C5A880" size={14} />
-                <div className="absolute inset-1 border border-[#C5A880]/15 pointer-events-none group-hover:border-[#D4AF37]/30 transition-colors" />
-                <p className="font-serif text-base sm:text-lg text-cream font-semibold group-hover:text-[#D4AF37] transition-colors relative z-10">15-Year Guarantee</p>
-                <p className="text-xs text-cream/75 mt-0.5 relative z-10">Artisan structural integrity assurance</p>
-              </div>
-              <div className="p-4 bg-[#161619]/85 backdrop-blur-md border-2 border-[#C5A880]/30 hover:border-[#D4AF37] rounded-xs shadow-md transition-all relative group overflow-hidden">
-                <OrnateCardCorners color="#C5A880" size={14} />
-                <div className="absolute inset-1 border border-[#C5A880]/15 pointer-events-none group-hover:border-[#D4AF37]/30 transition-colors" />
-                <p className="font-serif text-base sm:text-lg text-cream font-semibold group-hover:text-[#D4AF37] transition-colors relative z-10">Verified Origin</p>
-                <p className="text-xs text-cream/75 mt-0.5 relative z-10">Tuscan Leather & Carrara Quinquennial</p>
-              </div>
-            </div>
           </div>
         </section>
 
-        {/* 2. INFINITE CONTINUOUS CATEGORY LOOP SECTION (Zero Gap, Continuous Auto-Orbit with Vintage Gold Frames) */}
+        {/* 2. INFINITE CONTINUOUS CATEGORY LOOP SECTION */}
         <CategoryInfiniteLoop />
       </div>
 
-      {/* Main Content Body with Antique Neoclassical Trims and Vintage Borders */}
-      <div className="space-y-24 pt-10">
-        {/* Section Transition Ornate Royal Crest */}
-        <OrnateDivider theme="light" title="ARCHITECTURAL LIVING SANCTUARIES" subtitle="Harmonious Compositions in Marble, Timber & Leather" />
-
+      {/* Main Content Body with Warm Off-White Cream Theme & Vintage Borders */}
+      <div className="bg-[#FAF7F2] text-charcoal space-y-24 pt-16">
         {/* 3. Curated Categories Gallery with Vintage Royal Filigree Frames */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal direction="up">
@@ -225,8 +189,8 @@ export default async function HomePage() {
           </StaggerContainer>
         </section>
 
-        {/* 4. Featured Masterpieces with Scroll Reveals & Vintage Frames */}
-        <section className="bg-cream-subtle py-20 border-y border-[#C5A880]/30 relative">
+        {/* 4. Featured Masterpieces with Warm Off-White Surface & Vintage Frames */}
+        <section className="bg-[#F4EFE6] py-20 border-y border-[#D8CEBF] relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal direction="up">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
@@ -258,14 +222,14 @@ export default async function HomePage() {
 
                 return (
                   <StaggerItem key={product.id}>
-                    <div className="group bg-white border-2 border-[#C5A880]/30 hover:border-[#8C6D46] flex flex-col justify-between hover:shadow-[0_12px_32px_rgba(140,109,70,0.12)] transition-all duration-300 shadow-xs h-full relative rounded-xs overflow-hidden">
+                    <div className="group bg-[#FDFBF7] border-2 border-[#D8CEBF] hover:border-[#8C6D46] flex flex-col justify-between hover:shadow-[0_12px_32px_rgba(140,109,70,0.12)] transition-all duration-300 shadow-xs h-full relative rounded-xs overflow-hidden">
                       {/* Vintage Corner Brackets */}
                       <OrnateCardCorners color="#C5A880" size={14} />
 
                       {/* Inner Gold Inlay Pinstripe */}
                       <div className="absolute inset-1.5 border border-[#C5A880]/15 pointer-events-none group-hover:border-[#8C6D46]/30 transition-colors" />
 
-                      <Link href={`/product/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-cream-subtle">
+                      <Link href={`/product/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-[#FAF6F0]">
                         <img
                           src={primaryImage}
                           alt={product.name}
@@ -282,7 +246,7 @@ export default async function HomePage() {
                             {variants.map((v) => (
                               <span
                                 key={v.id || v.sku}
-                                className="w-3 h-3 rounded-full border border-cream-border"
+                                className="w-3 h-3 rounded-full border border-[#D8CEBF]"
                                 style={{ backgroundColor: v.colorHex }}
                                 title={`${v.colorName} (${v.material})`}
                               />
@@ -301,7 +265,7 @@ export default async function HomePage() {
                           </p>
                         </div>
 
-                        <div className="pt-3 border-t border-[#C5A880]/20 flex items-baseline justify-between">
+                        <div className="pt-3 border-t border-[#D8CEBF]/60 flex items-baseline justify-between">
                           <div>
                             <span className="text-[10px] uppercase text-charcoal/50 tracking-wider">From</span>
                             <p className="font-serif text-sm font-semibold text-charcoal">
@@ -342,15 +306,15 @@ export default async function HomePage() {
                 that deepens with each passing decade.
               </p>
 
-              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-[#C5A880]/30">
-                <div className="p-4 bg-white border-2 border-[#C5A880]/30 rounded-xs shadow-xs relative overflow-hidden group">
+              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-[#D8CEBF]">
+                <div className="p-4 bg-[#FDFBF7] border-2 border-[#D8CEBF] rounded-xs shadow-xs relative overflow-hidden group">
                   <OrnateCardCorners color="#C5A880" size={12} />
                   <p className="font-serif text-2xl text-charcoal font-semibold">HSN 9403</p>
                   <p className="text-xs text-charcoal/60 mt-1">
                     Fully compliant Indian GST invoicing with 18% tax credit eligibility for residential & commercial spaces.
                   </p>
                 </div>
-                <div className="p-4 bg-white border-2 border-[#C5A880]/30 rounded-xs shadow-xs relative overflow-hidden group">
+                <div className="p-4 bg-[#FDFBF7] border-2 border-[#D8CEBF] rounded-xs shadow-xs relative overflow-hidden group">
                   <OrnateCardCorners color="#C5A880" size={12} />
                   <p className="font-serif text-2xl text-charcoal font-semibold">Zero Plastic</p>
                   <p className="text-xs text-charcoal/60 mt-1">
@@ -380,7 +344,7 @@ export default async function HomePage() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 border-2 border-[#C5A880]/50 shadow-luxury max-w-xs hidden sm:block rounded-xs">
+              <div className="absolute -bottom-6 -left-6 bg-[#FDFBF7] p-6 border-2 border-[#D8CEBF] shadow-luxury max-w-xs hidden sm:block rounded-xs">
                 <OrnateCardCorners color="#C5A880" size={12} />
                 <p className="text-[10px] uppercase tracking-widest text-[#8C6D46] font-semibold">Quality Covenant</p>
                 <p className="font-serif text-sm text-charcoal mt-1 italic">
@@ -395,7 +359,7 @@ export default async function HomePage() {
         <HomeVisitBookingSection />
 
         {/* 7. Client Testimonials with Scroll Stagger & Vintage Plaques */}
-        <section className="bg-cream-subtle text-charcoal py-20 border-t border-[#C5A880]/30 relative">
+        <section className="bg-[#F4EFE6] text-charcoal py-20 border-t border-[#D8CEBF] relative">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-12">
             <ScrollReveal direction="up">
               <div className="space-y-2">
@@ -408,7 +372,7 @@ export default async function HomePage() {
 
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left" staggerDelay={0.15}>
               <StaggerItem>
-                <div className="p-6 border-2 border-[#C5A880]/35 bg-white shadow-xs space-y-4 h-full relative rounded-xs group hover:border-[#8C6D46] transition-all">
+                <div className="p-6 border-2 border-[#D8CEBF] bg-[#FDFBF7] shadow-xs space-y-4 h-full relative rounded-xs group hover:border-[#8C6D46] transition-all">
                   <OrnateCardCorners color="#C5A880" size={14} />
                   <div className="flex text-amber-500 text-sm">
                     {'★★★★★'}
@@ -417,7 +381,7 @@ export default async function HomePage() {
                     &ldquo;The Augustus Grande Chesterfield is the unquestioned crown jewel of our penthouse.
                     The leather fragrance and tufting precision rival the finest European royal houses.&rdquo;
                   </p>
-                  <div className="pt-2 border-t border-[#C5A880]/20">
+                  <div className="pt-2 border-t border-[#D8CEBF]/60">
                     <p className="text-xs font-serif font-semibold text-charcoal">Vikramaditya Singhania</p>
                     <p className="text-[10px] text-charcoal/50">Altamount Road, South Mumbai</p>
                   </div>
@@ -425,7 +389,7 @@ export default async function HomePage() {
               </StaggerItem>
 
               <StaggerItem>
-                <div className="p-6 border-2 border-[#C5A880]/35 bg-white shadow-xs space-y-4 h-full relative rounded-xs group hover:border-[#8C6D46] transition-all">
+                <div className="p-6 border-2 border-[#D8CEBF] bg-[#FDFBF7] shadow-xs space-y-4 h-full relative rounded-xs group hover:border-[#8C6D46] transition-all">
                   <OrnateCardCorners color="#C5A880" size={14} />
                   <div className="flex text-amber-500 text-sm">
                     {'★★★★★'}
@@ -434,7 +398,7 @@ export default async function HomePage() {
                     &ldquo;The Solarium Carrara table arrived with five white-glove technicians.
                     They leveled it within 1mm precision and provided full sealing certification. Impeccable.&rdquo;
                   </p>
-                  <div className="pt-2 border-t border-[#C5A880]/20">
+                  <div className="pt-2 border-t border-[#D8CEBF]/60">
                     <p className="text-xs font-serif font-semibold text-charcoal">Gayatri & Samir Kapur</p>
                     <p className="text-[10px] text-charcoal/50">Golf Links, New Delhi</p>
                   </div>
@@ -442,7 +406,7 @@ export default async function HomePage() {
               </StaggerItem>
 
               <StaggerItem>
-                <div className="p-6 border-2 border-[#C5A880]/35 bg-white shadow-xs space-y-4 h-full relative rounded-xs group hover:border-[#8C6D46] transition-all">
+                <div className="p-6 border-2 border-[#D8CEBF] bg-[#FDFBF7] shadow-xs space-y-4 h-full relative rounded-xs group hover:border-[#8C6D46] transition-all">
                   <OrnateCardCorners color="#C5A880" size={14} />
                   <div className="flex text-amber-500 text-sm">
                     {'★★★★★'}
@@ -451,7 +415,7 @@ export default async function HomePage() {
                     &ldquo;From instantaneous Razorpay settlement to automated GST input credit invoices,
                     the purchase journey matches the elegance of the furniture.&rdquo;
                   </p>
-                  <div className="pt-2 border-t border-[#C5A880]/20">
+                  <div className="pt-2 border-t border-[#D8CEBF]/60">
                     <p className="text-xs font-serif font-semibold text-charcoal">Rohan Mehra, Principal Architect</p>
                     <p className="text-[10px] text-charcoal/50">Lavelle Road, Bengaluru</p>
                   </div>

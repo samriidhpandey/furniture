@@ -7,16 +7,19 @@
 :root {
   --font-playfair: 'Playfair Display', Georgia, serif;
   --font-jakarta: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --bg-cream: #FBF9F5;
+  --bg-cream: #FAF7F2;
+  --bg-cream-subtle: #F4EFE6;
+  --bg-cream-card: #FDFBF7;
   --text-charcoal: #121214;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: #FAF7F2;
 }
 
 body {
-  background-color: var(--bg-cream);
+  background-color: #FAF7F2;
   color: var(--text-charcoal);
   font-family: var(--font-jakarta);
   -webkit-font-smoothing: antialiased;

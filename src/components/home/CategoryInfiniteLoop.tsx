@@ -121,12 +121,9 @@ export default function CategoryInfiniteLoop() {
   const loopItems = [...defaultCategories, ...defaultCategories, ...defaultCategories];
 
   return (
-    <section className="relative pt-2 pb-16 bg-gradient-to-b from-[#121214] via-[#161619] to-[#121214] text-cream overflow-hidden z-20">
-      {/* Top Ornate Neoclassical Gold Crest Divider */}
-      <OrnateDivider theme="dark" title="SOVEREIGN LIVING SANCTUARIES" subtitle="Curated Architectural Archive" />
-
+    <section className="relative pt-6 pb-16 bg-gradient-to-b from-[#121214] via-[#161619] to-[#121214] text-cream overflow-hidden z-20">
       {/* Header & Controls Bar */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 mt-4">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 mt-2">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A880]/20 pb-4">
           <div>
             <div className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-[#C5A880] font-semibold">
