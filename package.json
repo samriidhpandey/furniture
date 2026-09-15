@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -16,7 +16,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.11",
     "lucide-react": "^0.454.0",
-    "next": "14.2.15",
+    "next": "^14.2.23",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4"
