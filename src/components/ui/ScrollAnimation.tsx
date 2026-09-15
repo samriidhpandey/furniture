@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 interface ScrollRevealProps {
@@ -14,17 +14,22 @@ interface ScrollRevealProps {
 export function ScrollReveal({
   children,
   delay = 0,
-  duration = 0.6,
+  duration = 0.5,
   direction = 'up',
   className = '',
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (shouldReduceMotion || !mounted) {
     return <div className={className}>{children}</div>;
   }
 
-  const offset = 40;
+  const offset = 20;
   const initialVariants = {
     up: { opacity: 0, y: offset },
     down: { opacity: 0, y: -offset },
@@ -37,11 +42,11 @@ export function ScrollReveal({
     <motion.div
       initial={initialVariants[direction]}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
+      viewport={{ once: true, amount: 0 }}
       transition={{
         duration,
         delay,
-        ease: [0.21, 0.47, 0.32, 0.98],
+        ease: 'easeOut',
       }}
       className={className}
     >
@@ -52,7 +57,7 @@ export function ScrollReveal({
 
 export function StaggerContainer({
   children,
-  staggerDelay = 0.15,
+  staggerDelay = 0.1,
   className = '',
 }: {
   children: React.ReactNode;
@@ -60,16 +65,21 @@ export function StaggerContainer({
   className?: string;
 }) {
   const shouldReduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (shouldReduceMotion || !mounted) {
     return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
-      initial="hidden"
+      initial="show"
       whileInView="show"
-      viewport={{ once: true, margin: '-60px' }}
+      viewport={{ once: true, amount: 0 }}
       variants={{
         hidden: {},
         show: {
@@ -93,20 +103,24 @@ export function StaggerItem({
   className?: string;
 }) {
   const shouldReduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (shouldReduceMotion || !mounted) {
     return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 30, scale: 0.96 },
+        hidden: { opacity: 0, y: 15 },
         show: {
           opacity: 1,
           y: 0,
-          scale: 1,
-          transition: { duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] },
+          transition: { duration: 0.4, ease: 'easeOut' },
         },
       }}
       className={className}
