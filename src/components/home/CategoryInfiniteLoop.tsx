@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Pause, Play, Compass, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Pause, Play, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface CategoryItem {
   id: string;
@@ -73,21 +73,56 @@ const defaultCategories: CategoryItem[] = [
 
 export default function CategoryInfiniteLoop() {
   const [isPaused, setIsPaused] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Duplicate items twice to achieve seamless infinite continuous loop
-  const loopItems = [...defaultCategories, ...defaultCategories];
+  // Smooth continuous auto-scroll loop effect
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    let animationFrameId: number;
+    const speed = 0.85; // smooth scrolling speed
+
+    const scrollStep = () => {
+      if (!isPaused && el) {
+        el.scrollLeft += speed;
+        // If scrolled past the half of duplicated content, seamlessly reset
+        if (el.scrollLeft >= el.scrollWidth / 2) {
+          el.scrollLeft = 0;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scrollStep);
+    };
+
+    animationFrameId = requestAnimationFrame(scrollStep);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isPaused]);
+
+  // Manual nudge navigation
+  const nudge = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -380 : 380,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  // Duplicate items for continuous seamless loop
+  const loopItems = [...defaultCategories, ...defaultCategories, ...defaultCategories];
 
   return (
-    <section className="relative py-12 bg-charcoal text-cream overflow-hidden border-y border-cream/10">
-      {/* Background Subtle Gradient Glow */}
-      <div className="absolute inset-0 bg-radial from-bronze/10 via-transparent to-transparent pointer-events-none opacity-50" />
+    <section className="relative pt-6 pb-20 bg-charcoal text-cream overflow-hidden border-b border-cream/10 -mt-1 z-20">
+      {/* Top Ambient Glow Wash */}
+      <div className="absolute inset-0 bg-gradient-to-b from-charcoal via-[#18181B] to-charcoal pointer-events-none" />
 
       {/* Header & Controls Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cream/10 pb-5">
           <div>
             <div className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-bronze font-semibold">
-              <Sparkles className="w-3 h-3 text-bronze" />
+              <Sparkles className="w-3.5 h-3.5 text-bronze" />
               <span>Architectural Collections in Motion</span>
             </div>
             <h2 className="font-serif text-2xl sm:text-4xl text-cream mt-1 font-normal tracking-tight">
@@ -95,7 +130,26 @@ export default function CategoryInfiniteLoop() {
             </h2>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Manual arrow nudges */}
+            <div className="hidden sm:flex items-center gap-1.5 border border-cream/20 rounded-full p-1 bg-charcoal/60 backdrop-blur-md">
+              <button
+                onClick={() => nudge('left')}
+                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-bronze hover:text-charcoal transition-colors"
+                aria-label="Previous category"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => nudge('right')}
+                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-bronze hover:text-charcoal transition-colors"
+                aria-label="Next category"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Pause / Resume Button */}
             <button
               onClick={() => setIsPaused(!isPaused)}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-cream/20 bg-charcoal/60 hover:border-bronze hover:text-bronze text-[11px] uppercase tracking-wider rounded-full transition-all backdrop-blur-xs"
@@ -118,25 +172,24 @@ export default function CategoryInfiniteLoop() {
               href="/catalog"
               className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium text-bronze hover:text-bronze-light transition-colors"
             >
-              <span>View All Collections</span>
+              <span>All Collections</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Infinite Loop Ribbon / Track */}
+      {/* Infinite Loop Ribbon / Track with Overflow Shadow */}
       <div className="relative w-full overflow-hidden">
-        {/* Subtle Edge Vignette Shadow for Premium Depth */}
+        {/* Soft Vignette Blur Masks */}
         <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-charcoal via-charcoal/80 to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-charcoal via-charcoal/80 to-transparent z-10 pointer-events-none" />
 
         {/* Continuous Marquee Track */}
         <div
-          className="flex gap-6 w-max animate-category-marquee"
-          style={{
-            animationPlayState: isPaused ? 'paused' : 'running',
-          }}
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth cursor-grab active:cursor-grabbing px-6"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -144,7 +197,7 @@ export default function CategoryInfiniteLoop() {
             <Link
               key={`${cat.id}-${idx}`}
               href={`/catalog?category=${cat.categoryParam}`}
-              className="group relative flex-shrink-0 w-[280px] sm:w-[360px] h-[440px] bg-charcoal-light border border-cream/15 overflow-hidden transition-all duration-500 hover:border-bronze hover:shadow-2xl flex flex-col justify-end"
+              className="group relative flex-shrink-0 w-[280px] sm:w-[360px] h-[460px] bg-charcoal-light border border-cream/15 overflow-hidden transition-all duration-500 hover:border-bronze hover:shadow-2xl flex flex-col justify-end"
             >
               {/* Category Background Image */}
               <div className="absolute inset-0 z-0">
@@ -155,15 +208,15 @@ export default function CategoryInfiniteLoop() {
                   loading="lazy"
                 />
                 {/* Rich atmospheric luxury gradient wash */}
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
               </div>
 
               {/* Top Category Badge */}
               <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
-                <span className="px-2.5 py-1 bg-charcoal/80 backdrop-blur-md border border-cream/20 text-cream text-[10px] uppercase tracking-[0.2em] font-medium">
+                <span className="px-2.5 py-1 bg-charcoal/85 backdrop-blur-md border border-cream/20 text-cream text-[10px] uppercase tracking-[0.2em] font-medium">
                   {`0${(idx % defaultCategories.length) + 1} / ARCHIVE`}
                 </span>
-                <span className="w-8 h-8 rounded-full bg-charcoal/80 backdrop-blur-md border border-cream/20 flex items-center justify-center text-bronze group-hover:bg-bronze group-hover:text-charcoal transition-colors">
+                <span className="w-8 h-8 rounded-full bg-charcoal/85 backdrop-blur-md border border-cream/20 flex items-center justify-center text-bronze group-hover:bg-bronze group-hover:text-charcoal transition-colors">
                   <ArrowUpRight className="w-4 h-4" />
                 </span>
               </div>

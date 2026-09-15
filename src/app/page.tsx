@@ -64,79 +64,86 @@ export default async function HomePage() {
   ];
 
   return (
-    <div className="space-y-24 pb-20 overflow-hidden">
-      {/* 1. Cinematic Luxury Hero Section with Clear Visible Background Image */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-charcoal text-cream">
-        {/* Crisp, Full-bleed Background Image */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=80"
-            alt="A1 Luxury Furniture Masterpiece Architectural Residence"
-            className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out scale-100"
-          />
-          {/* Subtle translucent ambient wash so image is 100% visible while text is crisp */}
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/35 to-charcoal/50" />
-        </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20 sm:py-28">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-bronze/60 bg-charcoal/70 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.25em] text-bronze font-medium shadow-md">
-            <Sparkles className="w-3.5 h-3.5 text-bronze" />
-            <span>The 2026 Sovereign Atelier Archive</span>
+    <div className="pb-20 overflow-hidden">
+      {/* 1. Cinematic Luxury Hero Section + Continuous Category Orbit (Seamless Dark Charcoal Theme with Ambient Blur) */}
+      <div className="bg-charcoal text-cream relative">
+        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-charcoal text-cream">
+          {/* Crisp, Full-bleed Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=80"
+              alt="A1 Luxury Furniture Masterpiece Architectural Residence"
+              className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out scale-100"
+            />
+            {/* Subtle translucent ambient wash so image is 100% visible while text is crisp */}
+            <div className="absolute inset-0 bg-gradient-to-t from-charcoal/95 via-charcoal/40 to-charcoal/50" />
+            
+            {/* Frosted Glass Blur & Gradient Transition connecting Hero into Category Loop */}
+            <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-charcoal via-charcoal/85 to-transparent backdrop-blur-md pointer-events-none" />
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight text-cream leading-[1.1] max-w-4xl mx-auto drop-shadow-md">
-            Masterpieces in <span className="italic font-normal text-bronze-light">Living Form</span>
-          </h1>
+          <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20 sm:py-28">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-bronze/60 bg-charcoal/70 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.25em] text-bronze font-medium shadow-md">
+              <Sparkles className="w-3.5 h-3.5 text-bronze" />
+              <span>The 2026 Sovereign Atelier Archive</span>
+            </div>
 
-          <p className="text-sm sm:text-base md:text-lg text-cream/90 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-sm">
-            Curated book-matched Italian Carrara marble, hand-tufted Tuscan full-grain leathers, and generational solid
-            hardwood joinery. Handcrafted for the world&apos;s most distinguished residences.
-          </p>
+            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight text-cream leading-[1.1] max-w-4xl mx-auto drop-shadow-md">
+              Masterpieces in <span className="italic font-normal text-bronze-light">Living Form</span>
+            </h1>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Link
-              href="/catalog"
-              className="w-full sm:w-auto px-8 py-4 bg-bronze text-charcoal font-semibold text-xs uppercase tracking-[0.25em] hover:bg-bronze-light transition-all shadow-bronze-glow flex items-center justify-center gap-3"
-            >
-              <span>Explore Collection</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <p className="text-sm sm:text-base md:text-lg text-cream/90 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-sm">
+              Curated book-matched Italian Carrara marble, hand-tufted Tuscan full-grain leathers, and generational solid
+              hardwood joinery. Handcrafted for the world&apos;s most distinguished residences.
+            </p>
 
-            <Link
-              href="/contact-us"
-              className="w-full sm:w-auto px-8 py-4 border border-cream/40 bg-charcoal/50 text-cream text-xs uppercase tracking-[0.25em] hover:border-bronze hover:text-bronze transition-all backdrop-blur-md flex items-center justify-center font-medium shadow-sm"
-            >
-              <span>Book Salon Viewing</span>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <Link
+                href="/catalog"
+                className="w-full sm:w-auto px-8 py-4 bg-bronze text-charcoal font-semibold text-xs uppercase tracking-[0.25em] hover:bg-bronze-light transition-all shadow-bronze-glow flex items-center justify-center gap-3"
+              >
+                <span>Explore Collection</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+
+              <Link
+                href="/contact-us"
+                className="w-full sm:w-auto px-8 py-4 border border-cream/40 bg-charcoal/50 text-cream text-xs uppercase tracking-[0.25em] hover:border-bronze hover:text-bronze transition-all backdrop-blur-md flex items-center justify-center font-medium shadow-sm"
+              >
+                <span>Book Salon Viewing</span>
+              </Link>
+            </div>
+
+            {/* Quick Pillars (Glassmorphism Cards over Background Image) */}
+            <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 border-t border-cream/20 text-left">
+              <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
+                <p className="font-serif text-base sm:text-lg text-cream font-semibold">Bespoke Curation</p>
+                <p className="text-xs text-cream/75 mt-0.5">Custom sizing & rare marble selection</p>
+              </div>
+              <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
+                <p className="font-serif text-base sm:text-lg text-cream font-semibold">White-Glove Pan-India</p>
+                <p className="text-xs text-cream/75 mt-0.5">Complimentary assembly & debris removal</p>
+              </div>
+              <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
+                <p className="font-serif text-base sm:text-lg text-cream font-semibold">15-Year Guarantee</p>
+                <p className="text-xs text-cream/75 mt-0.5">Artisan structural integrity assurance</p>
+              </div>
+              <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
+                <p className="font-serif text-base sm:text-lg text-cream font-semibold">Verified Origin</p>
+                <p className="text-xs text-cream/75 mt-0.5">Tuscan Leather & Carrara Quinquennial</p>
+              </div>
+            </div>
           </div>
+        </section>
 
-          {/* Quick Pillars (Glassmorphism Cards over Background Image) */}
-          <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 border-t border-cream/20 text-left">
-            <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
-              <p className="font-serif text-base sm:text-lg text-cream font-semibold">Bespoke Curation</p>
-              <p className="text-xs text-cream/75 mt-0.5">Custom sizing & rare marble selection</p>
-            </div>
-            <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
-              <p className="font-serif text-base sm:text-lg text-cream font-semibold">White-Glove Pan-India</p>
-              <p className="text-xs text-cream/75 mt-0.5">Complimentary assembly & debris removal</p>
-            </div>
-            <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
-              <p className="font-serif text-base sm:text-lg text-cream font-semibold">15-Year Guarantee</p>
-              <p className="text-xs text-cream/75 mt-0.5">Artisan structural integrity assurance</p>
-            </div>
-            <div className="p-4 bg-charcoal/55 backdrop-blur-md border border-cream/15 rounded-xs shadow-sm hover:border-bronze/50 transition-all">
-              <p className="font-serif text-base sm:text-lg text-cream font-semibold">Verified Origin</p>
-              <p className="text-xs text-cream/75 mt-0.5">Tuscan Leather & Carrara Quinquennial</p>
-            </div>
-          </div>
-        </div>
-      </section>
+        {/* 2. INFINITE CONTINUOUS CATEGORY LOOP SECTION (Zero Gap, Continuous Auto-Orbit) */}
+        <CategoryInfiniteLoop />
+      </div>
 
-      {/* 2. INFINITE CONTINUOUS CATEGORY LOOP SECTION (Running Marquee Carousel) */}
-      <CategoryInfiniteLoop />
-
-      {/* 3. Curated Categories Gallery with Scroll Animations */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Main Content Body */}
+      <div className="space-y-24 pt-20">
+        {/* 3. Curated Categories Gallery with Scroll Animations */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal direction="up">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
             <span className="text-[10px] tracking-[0.3em] uppercase text-bronze-dark font-semibold">
@@ -402,6 +409,7 @@ export default async function HomePage() {
           </StaggerContainer>
         </div>
       </section>
+      </div>
     </div>
   );
 }
