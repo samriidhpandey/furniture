@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Pause, Play, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Pause, Play, ArrowUpRight, ChevronLeft, ChevronRight, Gem } from 'lucide-react';
+import OrnateDivider, { OrnateCardCorners } from '@/components/ui/OrnateDivider';
 
 export interface CategoryItem {
   id: string;
@@ -12,11 +13,13 @@ export interface CategoryItem {
   material: string;
   image: string;
   itemCount: string;
+  romanId: string;
 }
 
 const defaultCategories: CategoryItem[] = [
   {
     id: 'cat-1',
+    romanId: 'I',
     name: 'Living Room Gallery',
     subtitle: 'Hand-Tufted Chesterfields & Curved Lounges',
     categoryParam: 'Living',
@@ -26,6 +29,7 @@ const defaultCategories: CategoryItem[] = [
   },
   {
     id: 'cat-2',
+    romanId: 'II',
     name: 'Dining Sanctuaries',
     subtitle: 'Carrara Marble & Fluted Cast Bronze',
     categoryParam: 'Dining',
@@ -35,6 +39,7 @@ const defaultCategories: CategoryItem[] = [
   },
   {
     id: 'cat-3',
+    romanId: 'III',
     name: 'Master Bedroom Suites',
     subtitle: 'Belgian Flax Linen & Floating Platforms',
     categoryParam: 'Bedroom',
@@ -44,6 +49,7 @@ const defaultCategories: CategoryItem[] = [
   },
   {
     id: 'cat-4',
+    romanId: 'IV',
     name: 'Executive Libraries',
     subtitle: 'Quarter-Sawn Walnut & Calfskin Accents',
     categoryParam: 'Executive',
@@ -53,6 +59,7 @@ const defaultCategories: CategoryItem[] = [
   },
   {
     id: 'cat-5',
+    romanId: 'V',
     name: 'Bespoke Atelier Commissions',
     subtitle: 'One-of-a-Kind Architectural Centrepieces',
     categoryParam: 'Bespoke',
@@ -62,6 +69,7 @@ const defaultCategories: CategoryItem[] = [
   },
   {
     id: 'cat-6',
+    romanId: 'VI',
     name: 'Artisan Accent & Lounge',
     subtitle: 'Sculptural Occasional Chairs & Consoles',
     categoryParam: 'Living',
@@ -81,12 +89,12 @@ export default function CategoryInfiniteLoop() {
     if (!el) return;
 
     let animationFrameId: number;
-    const speed = 0.85; // smooth scrolling speed
+    const speed = 0.9;
 
     const scrollStep = () => {
       if (!isPaused && el) {
         el.scrollLeft += speed;
-        // If scrolled past the half of duplicated content, seamlessly reset
+        // Seamless infinite reset at half width
         if (el.scrollLeft >= el.scrollWidth / 2) {
           el.scrollLeft = 0;
         }
@@ -113,36 +121,37 @@ export default function CategoryInfiniteLoop() {
   const loopItems = [...defaultCategories, ...defaultCategories, ...defaultCategories];
 
   return (
-    <section className="relative pt-6 pb-20 bg-charcoal text-cream overflow-hidden border-b border-cream/10 -mt-1 z-20">
-      {/* Top Ambient Glow Wash */}
-      <div className="absolute inset-0 bg-gradient-to-b from-charcoal via-[#18181B] to-charcoal pointer-events-none" />
+    <section className="relative pt-2 pb-16 bg-gradient-to-b from-[#121214] via-[#161619] to-[#121214] text-cream overflow-hidden z-20">
+      {/* Top Ornate Neoclassical Gold Crest Divider */}
+      <OrnateDivider theme="dark" title="SOVEREIGN LIVING SANCTUARIES" subtitle="Curated Architectural Archive" />
 
       {/* Header & Controls Bar */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cream/10 pb-5">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 mt-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A880]/20 pb-4">
           <div>
-            <div className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-bronze font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-bronze" />
-              <span>Architectural Collections in Motion</span>
+            <div className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-[#C5A880] font-semibold">
+              <Gem className="w-3.5 h-3.5 text-[#C5A880]" />
+              <span>Imperial Portfolio in Motion</span>
             </div>
             <h2 className="font-serif text-2xl sm:text-4xl text-cream mt-1 font-normal tracking-tight">
-              Curated Living Sanctuaries
+              Masterpiece Salons & Chambers
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Manual arrow nudges */}
-            <div className="hidden sm:flex items-center gap-1.5 border border-cream/20 rounded-full p-1 bg-charcoal/60 backdrop-blur-md">
+            {/* Manual arrow nudges with vintage brass styling */}
+            <div className="hidden sm:flex items-center gap-1.5 border border-[#C5A880]/40 rounded-full p-1 bg-charcoal/80 backdrop-blur-md shadow-sm">
               <button
                 onClick={() => nudge('left')}
-                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-bronze hover:text-charcoal transition-colors"
+                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[#C5A880] hover:text-charcoal text-[#C5A880] transition-colors"
                 aria-label="Previous category"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
+              <div className="w-px h-3 bg-[#C5A880]/30" />
               <button
                 onClick={() => nudge('right')}
-                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-bronze hover:text-charcoal transition-colors"
+                className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[#C5A880] hover:text-charcoal text-[#C5A880] transition-colors"
                 aria-label="Next category"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -152,17 +161,17 @@ export default function CategoryInfiniteLoop() {
             {/* Pause / Resume Button */}
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-cream/20 bg-charcoal/60 hover:border-bronze hover:text-bronze text-[11px] uppercase tracking-wider rounded-full transition-all backdrop-blur-xs"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#C5A880]/40 bg-charcoal/70 hover:border-[#D4AF37] hover:text-[#D4AF37] text-[11px] uppercase tracking-wider rounded-full transition-all backdrop-blur-xs text-[#C5A880]"
               title={isPaused ? 'Resume auto-scrolling loop' : 'Pause loop to inspect'}
             >
               {isPaused ? (
                 <>
-                  <Play className="w-3 h-3 text-bronze" />
+                  <Play className="w-3 h-3 text-[#C5A880]" />
                   <span>Resume Orbit</span>
                 </>
               ) : (
                 <>
-                  <Pause className="w-3 h-3 text-bronze" />
+                  <Pause className="w-3 h-3 text-[#C5A880]" />
                   <span>Pause Motion</span>
                 </>
               )}
@@ -170,20 +179,20 @@ export default function CategoryInfiniteLoop() {
 
             <Link
               href="/catalog"
-              className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium text-bronze hover:text-bronze-light transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium text-[#C5A880] hover:text-[#E5C494] transition-colors"
             >
-              <span>All Collections</span>
+              <span>Explore Archive</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Infinite Loop Ribbon / Track with Overflow Shadow */}
-      <div className="relative w-full overflow-hidden">
-        {/* Soft Vignette Blur Masks */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-charcoal via-charcoal/80 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-charcoal via-charcoal/80 to-transparent z-10 pointer-events-none" />
+      {/* Infinite Loop Ribbon / Track with Vintage Gold Frames */}
+      <div className="relative w-full overflow-hidden py-2">
+        {/* Soft Smokey Vignette Blur Masks */}
+        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-36 bg-gradient-to-r from-[#121214] via-[#121214]/85 to-transparent z-30 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-36 bg-gradient-to-l from-[#121214] via-[#121214]/85 to-transparent z-30 pointer-events-none" />
 
         {/* Continuous Marquee Track */}
         <div
@@ -197,8 +206,14 @@ export default function CategoryInfiniteLoop() {
             <Link
               key={`${cat.id}-${idx}`}
               href={`/catalog?category=${cat.categoryParam}`}
-              className="group relative flex-shrink-0 w-[280px] sm:w-[360px] h-[460px] bg-charcoal-light border border-cream/15 overflow-hidden transition-all duration-500 hover:border-bronze hover:shadow-2xl flex flex-col justify-end"
+              className="group relative flex-shrink-0 w-[280px] sm:w-[360px] h-[460px] bg-charcoal border-2 border-[#C5A880]/30 hover:border-[#D4AF37] overflow-hidden transition-all duration-500 hover:shadow-2xl flex flex-col justify-end rounded-xs"
             >
+              {/* Ornate Vintage Corner Accents */}
+              <OrnateCardCorners color="#C5A880" />
+
+              {/* Inner Fine Gold Inlay Pinstripe */}
+              <div className="absolute inset-1.5 border border-[#C5A880]/20 pointer-events-none z-20 group-hover:border-[#D4AF37]/50 transition-colors" />
+
               {/* Category Background Image */}
               <div className="absolute inset-0 z-0">
                 <img
@@ -207,24 +222,24 @@ export default function CategoryInfiniteLoop() {
                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-1000 ease-out brightness-[0.88] group-hover:brightness-95"
                   loading="lazy"
                 />
-                {/* Rich atmospheric luxury gradient wash */}
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
+                {/* Smokey Atmospheric Gradient Wash */}
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/50 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
               </div>
 
-              {/* Top Category Badge */}
-              <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
-                <span className="px-2.5 py-1 bg-charcoal/85 backdrop-blur-md border border-cream/20 text-cream text-[10px] uppercase tracking-[0.2em] font-medium">
-                  {`0${(idx % defaultCategories.length) + 1} / ARCHIVE`}
+              {/* Top Roman Imperial Badge */}
+              <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
+                <span className="px-2.5 py-1 bg-charcoal/90 backdrop-blur-md border border-[#C5A880]/40 text-[#EAE6DF] text-[10px] uppercase tracking-[0.25em] font-serif font-semibold shadow-md">
+                  {`SALON ${cat.romanId}`}
                 </span>
-                <span className="w-8 h-8 rounded-full bg-charcoal/85 backdrop-blur-md border border-cream/20 flex items-center justify-center text-bronze group-hover:bg-bronze group-hover:text-charcoal transition-colors">
+                <span className="w-8 h-8 rounded-full bg-charcoal/90 backdrop-blur-md border border-[#C5A880]/40 flex items-center justify-center text-[#C5A880] group-hover:bg-[#C5A880] group-hover:text-charcoal transition-all shadow-md">
                   <ArrowUpRight className="w-4 h-4" />
                 </span>
               </div>
 
               {/* Bottom Content Card */}
-              <div className="relative z-10 p-6 space-y-2 bg-gradient-to-t from-charcoal via-charcoal/90 to-transparent pt-12">
+              <div className="relative z-20 p-6 space-y-2 bg-gradient-to-t from-[#121214] via-[#121214]/95 to-transparent pt-12">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-widest text-bronze font-semibold">
+                  <span className="text-[10px] uppercase tracking-widest text-[#C5A880] font-semibold">
                     {cat.material}
                   </span>
                   <span className="text-cream/30 text-xs">•</span>
@@ -233,7 +248,7 @@ export default function CategoryInfiniteLoop() {
                   </span>
                 </div>
 
-                <h3 className="font-serif text-xl sm:text-2xl text-cream group-hover:text-bronze transition-colors">
+                <h3 className="font-serif text-xl sm:text-2xl text-cream group-hover:text-[#D4AF37] transition-colors">
                   {cat.name}
                 </h3>
 
@@ -241,13 +256,25 @@ export default function CategoryInfiniteLoop() {
                   {cat.subtitle}
                 </p>
 
-                <div className="pt-2 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-bronze font-medium opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
-                  <span>Enter Gallery</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                <div className="pt-2 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#C5A880] font-medium opacity-90 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                  <span>Enter Salon</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#C5A880]" />
                 </div>
               </div>
             </Link>
           ))}
+        </div>
+      </div>
+
+      {/* Bottom Heritage Flourish Divider */}
+      <div className="max-w-5xl mx-auto px-4 mt-10">
+        <div className="h-px bg-gradient-to-r from-transparent via-[#C5A880]/50 to-transparent" />
+        <div className="flex items-center justify-center gap-3 -mt-2.5">
+          <div className="w-2 h-2 rotate-45 border border-[#C5A880] bg-charcoal" />
+          <span className="text-[9px] uppercase tracking-[0.3em] font-serif text-[#C5A880]/80 bg-charcoal px-3">
+            Bespoke Joinery & Rare Carrara Provenance
+          </span>
+          <div className="w-2 h-2 rotate-45 border border-[#C5A880] bg-charcoal" />
         </div>
       </div>
     </section>
