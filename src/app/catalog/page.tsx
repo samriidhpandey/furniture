@@ -4,6 +4,7 @@ import prisma from '@/lib/db';
 import { formatINR } from '@/lib/gst';
 import { SlidersHorizontal, ArrowRight, Check } from 'lucide-react';
 import CircularProductShowcase from '@/components/home/CircularProductShowcase';
+import { FALLBACK_PRODUCTS, parseProductImages } from '@/lib/products-fallback';
 
 export const revalidate = 60;
 
@@ -22,47 +23,63 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
   const sortOption = searchParams.sort || 'featured';
   const searchQuery = searchParams.q;
 
-  // Fetch all products for the 360 rotunda
-  const allMasterpieces = await prisma.product.findMany({
-    include: {
-      variants: true,
-      reviews: { where: { status: 'APPROVED' } },
-    },
-    orderBy: { basePrice: 'desc' },
-  });
+  let allMasterpieces: any[] = [];
+  let products: any[] = [];
 
-  // Build Prisma where query for the filtered grid below
-  const where: any = {};
-  if (categoryFilter && categoryFilter !== 'All') {
-    where.category = categoryFilter;
+  try {
+    // Fetch all products for the 360 rotunda
+    allMasterpieces = await prisma.product.findMany({
+      include: {
+        variants: true,
+        reviews: { where: { status: 'APPROVED' } },
+      },
+      orderBy: { basePrice: 'desc' },
+    });
+
+    // Build Prisma where query for the filtered grid below
+    const where: any = {};
+    if (categoryFilter && categoryFilter !== 'All') {
+      where.category = categoryFilter;
+    }
+    if (searchQuery) {
+      where.OR = [
+        { name: { contains: searchQuery } },
+        { tagline: { contains: searchQuery } },
+        { description: { contains: searchQuery } },
+      ];
+    }
+
+    // Determine ordering
+    let orderBy: any = { featured: 'desc' };
+    if (sortOption === 'price-asc') orderBy = { basePrice: 'asc' };
+    if (sortOption === 'price-desc') orderBy = { basePrice: 'desc' };
+    if (sortOption === 'name') orderBy = { name: 'asc' };
+
+    products = await prisma.product.findMany({
+      where,
+      orderBy,
+      include: {
+        variants: true,
+        reviews: { where: { status: 'APPROVED' } },
+      },
+    });
+  } catch (err) {
+    console.warn('Prisma fetch failed on catalog, using fallback items:', err);
+    allMasterpieces = FALLBACK_PRODUCTS;
+    products = FALLBACK_PRODUCTS;
   }
-  if (searchQuery) {
-    where.OR = [
-      { name: { contains: searchQuery } },
-      { tagline: { contains: searchQuery } },
-      { description: { contains: searchQuery } },
-    ];
+
+  if (!products || products.length === 0) {
+    products = FALLBACK_PRODUCTS;
   }
-
-  // Determine ordering
-  let orderBy: any = { featured: 'desc' };
-  if (sortOption === 'price-asc') orderBy = { basePrice: 'asc' };
-  if (sortOption === 'price-desc') orderBy = { basePrice: 'desc' };
-  if (sortOption === 'name') orderBy = { name: 'asc' };
-
-  let products = await prisma.product.findMany({
-    where,
-    orderBy,
-    include: {
-      variants: true,
-      reviews: { where: { status: 'APPROVED' } },
-    },
-  });
+  if (!allMasterpieces || allMasterpieces.length === 0) {
+    allMasterpieces = FALLBACK_PRODUCTS;
+  }
 
   // Client-side material filtering if specified
   if (materialFilter && materialFilter !== 'All') {
     products = products.filter((p) =>
-      p.variants.some((v) => v.material.toLowerCase().includes(materialFilter.toLowerCase()))
+      (p.variants || []).some((v: any) => (v.material || '').toLowerCase().includes(materialFilter.toLowerCase()))
     );
   }
 
@@ -182,9 +199,10 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => {
-              const primaryImage = JSON.parse(product.images)[0];
-              const totalStock = product.variants.reduce((acc, v) => acc + v.stock, 0);
-              const minPrice = product.variants[0]?.priceOverride || product.basePrice;
+              const primaryImage = parseProductImages(product.images)[0];
+              const variants = product.variants || [];
+              const totalStock = variants.reduce((acc: number, v: any) => acc + (v.stock || 0), 0);
+              const minPrice = variants[0]?.priceOverride || product.basePrice;
 
               return (
                 <div
@@ -215,16 +233,16 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
                     <div>
                       {/* Color variant dots */}
                       <div className="flex items-center gap-1.5 mb-2">
-                        {product.variants.map((v) => (
+                        {variants.map((v: any) => (
                           <span
-                            key={v.id}
+                            key={v.id || v.sku}
                             className="w-3.5 h-3.5 rounded-full border border-cream-border shadow-xs"
                             style={{ backgroundColor: v.colorHex }}
                             title={`${v.colorName} (${v.material})`}
                           />
                         ))}
                         <span className="text-[10px] text-charcoal/50 ml-1">
-                          {product.variants.length} finishes
+                          {variants.length} finishes
                         </span>
                       </div>
 

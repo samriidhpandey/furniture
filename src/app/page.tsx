@@ -5,6 +5,7 @@ import prisma from '@/lib/db';
 import { formatINR } from '@/lib/gst';
 import { ArrowRight, Sparkles, Shield, Compass, Gem, Check, ArrowUpRight, Star } from 'lucide-react';
 import type { ProductItem } from '@/components/home/CircularProductShowcase';
+import { FALLBACK_PRODUCTS, parseProductImages } from '@/lib/products-fallback';
 import CategoryInfiniteLoop from '@/components/home/CategoryInfiniteLoop';
 import HomeVisitBookingSection from '@/components/home/HomeVisitBookingSection';
 import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/ui/ScrollAnimation';
@@ -12,14 +13,26 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/ui/Scr
 export const revalidate = 60; // Technical SEO ISR (§27)
 
 export default async function HomePage() {
-  // Fetch all products with variants for the circular showcase & featured products
-  const allProducts = (await prisma.product.findMany({
-    include: {
-      variants: true,
-      reviews: { where: { status: 'APPROVED' } },
-    },
-    orderBy: { basePrice: 'desc' },
-  })) as unknown as ProductItem[];
+  let allProducts: ProductItem[] = [];
+
+  try {
+    const dbProducts = await prisma.product.findMany({
+      include: {
+        variants: true,
+        reviews: { where: { status: 'APPROVED' } },
+      },
+      orderBy: { basePrice: 'desc' },
+    });
+
+    if (dbProducts && dbProducts.length > 0) {
+      allProducts = dbProducts as unknown as ProductItem[];
+    } else {
+      allProducts = FALLBACK_PRODUCTS;
+    }
+  } catch (err) {
+    console.warn('Prisma fetch failed, using curated luxury fallback catalog:', err);
+    allProducts = FALLBACK_PRODUCTS;
+  }
 
   const featuredProducts = allProducts.filter((p) => Boolean(p.featured)).slice(0, 4);
 
@@ -194,9 +207,10 @@ export default async function HomePage() {
 
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.12}>
             {featuredProducts.map((product: ProductItem) => {
-              const primaryImage = JSON.parse(product.images)[0];
-              const variantCount = product.variants.length;
-              const minPrice = product.variants[0]?.priceOverride || product.basePrice;
+              const primaryImage = parseProductImages(product.images)[0];
+              const variants = product.variants || [];
+              const variantCount = variants.length;
+              const minPrice = variants[0]?.priceOverride || product.basePrice;
 
               return (
                 <StaggerItem key={product.id}>
@@ -215,9 +229,9 @@ export default async function HomePage() {
                     <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                       <div>
                         <div className="flex items-center gap-1.5 mb-1.5">
-                          {product.variants.map((v) => (
+                          {variants.map((v) => (
                             <span
-                              key={v.id}
+                              key={v.id || v.sku}
                               className="w-3 h-3 rounded-full border border-cream-border"
                               style={{ backgroundColor: v.colorHex }}
                               title={`${v.colorName} (${v.material})`}
