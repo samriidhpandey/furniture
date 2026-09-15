@@ -73,34 +73,31 @@ export default async function HomePage() {
       {/* 1. Cinematic Luxury Hero Section + Continuous Category Orbit (Seamless Dark Theme with Smokey Fog Atmospheric Blur) */}
       <div className="bg-[#121214] text-cream relative">
         <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#121214] text-cream">
-          {/* Crisp, Full-bleed Background Image with Seamless Smokey Fog Diffusion */}
+          {/* Crisp, Vibrant Full-bleed Background Image */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <img
-              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=80"
+              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=85"
               alt="A1 Luxury Furniture Masterpiece Architectural Residence"
-              className="w-full h-full object-cover object-center scale-100 opacity-90"
+              className="w-full h-full object-cover object-center scale-100 brightness-105 contrast-[1.02]"
             />
-            {/* Multi-layered Smokey Ambient Wash */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#121214]/50 via-[#121214]/75 to-[#121214]" />
-            
-            {/* Soft Radial Ambient Fog Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#121214_85%)] opacity-80" />
+            {/* Soft Ambient Contrast Tint (Light & Clear) */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-transparent" />
 
-            {/* Seamless Dissolving Smokey Blur Bottom Transition into Category Orbit */}
-            <div className="absolute bottom-0 inset-x-0 h-80 bg-gradient-to-t from-[#121214] via-[#121214]/95 to-transparent pointer-events-none" />
+            {/* Subtle Bottom Fog Blend into Category Orbit */}
+            <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#121214] via-[#121214]/75 to-transparent backdrop-blur-[2px]" />
           </div>
 
           <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20 sm:py-28">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#C5A880]/60 bg-[#161619]/90 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium shadow-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#C5A880]/70 bg-[#161619]/90 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium shadow-lg">
               <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
               <span>The 2026 Sovereign Atelier Archive</span>
             </div>
 
-            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight text-cream leading-[1.1] max-w-4xl mx-auto drop-shadow-md">
+            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight text-white leading-[1.1] max-w-4xl mx-auto drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
               Masterpieces in <span className="italic font-normal text-[#D4AF37]">Living Form</span>
             </h1>
 
-            <p className="text-sm sm:text-base md:text-lg text-cream/90 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-sm">
+            <p className="text-sm sm:text-base md:text-lg text-white/95 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               Curated book-matched Italian Carrara marble, hand-tufted Tuscan full-grain leathers, and generational solid
               hardwood joinery. Handcrafted for the world&apos;s most distinguished residences.
             </p>
