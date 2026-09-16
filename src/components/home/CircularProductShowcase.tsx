@@ -23,6 +23,7 @@ export interface ProductItem {
     material: string;
     priceOverride: number | null;
     stock: number;
+    image?: string;
   }[];
 }
 

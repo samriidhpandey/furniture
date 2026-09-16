@@ -296,6 +296,22 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Delete project
+  const handleDeleteProject = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this installation project?')) return;
+    try {
+      const res = await fetch(`/api/client-work?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        showToast('Installation project removed from archive.');
+        loadData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Create new Salon / Category card
   const handleCreateSalon = async (e: React.FormEvent) => {
     e.preventDefault();

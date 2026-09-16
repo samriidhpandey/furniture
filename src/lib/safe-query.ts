@@ -1,7 +1,5 @@
 import prisma from '@/lib/db';
 import { FALLBACK_PRODUCTS, findProductBySlug, type FullProduct } from '@/lib/products-fallback';
-import { getReels, type ShoppableReel } from '@/lib/reels-store';
-import { getCategories, type CategoryCard } from '@/lib/categories-store';
 
 /**
  * Race a promise against a timeout to ensure SSR never delays page transitions.
