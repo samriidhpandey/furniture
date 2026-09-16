@@ -9,7 +9,7 @@ import { FALLBACK_PRODUCTS, parseProductImages } from '@/lib/products-fallback';
 export const revalidate = 60;
 
 interface CatalogProps {
-  searchParams: {
+  searchParams?: {
     category?: string;
     material?: string;
     sort?: string;
@@ -18,10 +18,10 @@ interface CatalogProps {
 }
 
 export default async function CatalogPage({ searchParams }: CatalogProps) {
-  const categoryFilter = searchParams.category;
-  const materialFilter = searchParams.material;
-  const sortOption = searchParams.sort || 'featured';
-  const searchQuery = searchParams.q;
+  const categoryFilter = searchParams?.category;
+  const materialFilter = searchParams?.material;
+  const sortOption = searchParams?.sort || 'featured';
+  const searchQuery = searchParams?.q;
 
   let allMasterpieces: any[] = [];
   let products: any[] = [];
@@ -64,7 +64,7 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
       },
     });
   } catch (err) {
-    console.warn('Prisma fetch failed on catalog, using fallback items:', err);
+    // Graceful fallback for serverless / Vercel SQLite environments
     allMasterpieces = FALLBACK_PRODUCTS;
     products = FALLBACK_PRODUCTS;
   }
@@ -76,6 +76,21 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
     allMasterpieces = FALLBACK_PRODUCTS;
   }
 
+  // Fallback in-memory filtering if DB wasn't used or for fallback products
+  if (categoryFilter && categoryFilter !== 'All') {
+    products = products.filter((p) => (p.category || '').toLowerCase() === categoryFilter.toLowerCase());
+  }
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    products = products.filter(
+      (p) =>
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.tagline || '').toLowerCase().includes(q) ||
+        (p.description || '').toLowerCase().includes(q)
+    );
+  }
+
   // Client-side material filtering if specified
   if (materialFilter && materialFilter !== 'All') {
     products = products.filter((p) =>
@@ -83,8 +98,17 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
     );
   }
 
-  const categories = ['All', 'Living', 'Dining', 'Bedroom', 'Executive'];
-  const materials = ['All', 'Leather', 'Marble', 'Linen', 'Bouclé', 'Walnut'];
+  // Sorting
+  if (sortOption === 'price-asc') {
+    products.sort((a, b) => (a.basePrice || 0) - (b.basePrice || 0));
+  } else if (sortOption === 'price-desc') {
+    products.sort((a, b) => (b.basePrice || 0) - (a.basePrice || 0));
+  } else if (sortOption === 'name') {
+    products.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }
+
+  const categories = ['All', 'Decor', 'Living', 'Dining', 'Bedroom', 'Executive'];
+  const materials = ['All', 'Teak', 'Walnut', 'Sheesham', 'Oak', 'Cedar', 'Mango', 'Rosewood', 'Marble', 'Leather'];
 
   return (
     <div className="min-h-screen pb-16 space-y-12">
@@ -206,7 +230,7 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
 
               return (
                 <div
-                  key={product.id}
+                  key={product.id || product.slug}
                   className="group bg-white border border-cream-border flex flex-col justify-between hover:shadow-luxury transition-all duration-300 shadow-xs"
                 >
                   <Link

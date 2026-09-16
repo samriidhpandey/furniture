@@ -30,6 +30,9 @@ import {
   KeyRound,
   LogOut,
   UserCheck,
+  Play,
+  Video,
+  Film,
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -42,7 +45,7 @@ export default function AdminDashboardPage() {
   const [adminAuthError, setAdminAuthError] = useState('');
   const [isAuthenticatingAdmin, setIsAuthenticatingAdmin] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'ORDERS' | 'INVENTORY' | 'COUPONS' | 'REVIEWS' | 'INSTALLATIONS' | 'AUDIT'>('ORDERS');
+  const [activeTab, setActiveTab] = useState<'ORDERS' | 'INVENTORY' | 'SALONS' | 'REELS' | 'COUPONS' | 'REVIEWS' | 'INSTALLATIONS' | 'AUDIT'>('ORDERS');
   const [orders, setOrders] = useState<any[]>([]);
   const [inventory, setInventory] = useState<{ products: any[]; lowStockVariants: any[] }>({
     products: [],
@@ -51,8 +54,29 @@ export default function AdminDashboardPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [clientProjects, setClientProjects] = useState<any[]>([]);
+  const [salonCategories, setSalonCategories] = useState<any[]>([]);
+  const [reels, setReels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // New Salon Card Form State
+  const [newSalonName, setNewSalonName] = useState('');
+  const [newSalonCategory, setNewSalonCategory] = useState('Living');
+  const [newSalonImage, setNewSalonImage] = useState('');
+  const [isSubmittingSalon, setIsSubmittingSalon] = useState(false);
+
+  // New Shoppable Reel Form State
+  const [newReelTitle, setNewReelTitle] = useState('');
+  const [newReelVideoUrl, setNewReelVideoUrl] = useState('');
+  const [newReelThumbnail, setNewReelThumbnail] = useState('');
+  const [newReelProductName, setNewReelProductName] = useState('');
+  const [newReelProductUrl, setNewReelProductUrl] = useState('');
+  const [newReelPrice, setNewReelPrice] = useState('₹45,000');
+  const [newReelOriginalPrice, setNewReelOriginalPrice] = useState('₹75,000');
+  const [newReelDiscount, setNewReelDiscount] = useState('40% OFF');
+  const [newReelRating, setNewReelRating] = useState(5.0);
+  const [newReelReviewCount, setNewReelReviewCount] = useState(64);
+  const [isSubmittingReel, setIsSubmittingReel] = useState(false);
 
   // New Coupon Form
   const [newCouponCode, setNewCouponCode] = useState('');
@@ -86,18 +110,22 @@ export default function AdminDashboardPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [ordersRes, invRes, coupRes, revRes, projRes] = await Promise.all([
+      const [ordersRes, invRes, coupRes, revRes, projRes, catRes, reelsRes] = await Promise.all([
         fetch('/api/admin/orders').then((r) => r.json()),
         fetch('/api/admin/inventory').then((r) => r.json()),
         fetch('/api/admin/coupons').then((r) => r.json()),
         fetch('/api/admin/reviews').then((r) => r.json()),
         fetch('/api/client-work').then((r) => r.json()),
+        fetch('/api/admin/categories').then((r) => r.json()),
+        fetch('/api/admin/reels').then((r) => r.json()),
       ]);
       if (ordersRes.orders) setOrders(ordersRes.orders);
       if (invRes.products) setInventory(invRes);
       if (coupRes.coupons) setCoupons(coupRes.coupons);
       if (revRes.reviews) setReviews(revRes.reviews);
       if (projRes.projects) setClientProjects(projRes.projects);
+      if (catRes.categories) setSalonCategories(catRes.categories);
+      if (reelsRes.reels) setReels(reelsRes.reels);
     } catch (e) {
       console.error(e);
     } finally {
@@ -268,15 +296,110 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Delete client project
-  const handleDeleteProject = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this client installation?')) return;
+  // Create new Salon / Category card
+  const handleCreateSalon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSalonName.trim() || !newSalonImage.trim()) {
+      showToast('⚠️ Please provide both Salon Name and Image URL.');
+      return;
+    }
+    setIsSubmittingSalon(true);
     try {
-      const res = await fetch(`/api/client-work?id=${id}`, {
+      const res = await fetch('/api/admin/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newSalonName.trim(),
+          categoryParam: newSalonCategory,
+          image: newSalonImage.trim(),
+        }),
+      });
+      if (res.ok) {
+        showToast('✨ New Salon Card added to Homepage Orbit!');
+        setNewSalonName('');
+        setNewSalonImage('');
+        loadData();
+      } else {
+        const d = await res.json();
+        showToast(d.error || 'Failed to add card');
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmittingSalon(false);
+    }
+  };
+
+  // Delete Salon card
+  const handleDeleteSalon = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this Salon card from the carousel?')) return;
+    try {
+      const res = await fetch(`/api/admin/categories?id=${id}`, {
         method: 'DELETE',
       });
       if (res.ok) {
-        showToast('Client installation removed from archive.');
+        showToast('Salon card removed.');
+        loadData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Add Shoppable Reel
+  const handleCreateReel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReelTitle.trim() || !newReelVideoUrl.trim()) {
+      showToast('Please provide a Reel title and Instagram link / video URL.');
+      return;
+    }
+    setIsSubmittingReel(true);
+    try {
+      const res = await fetch('/api/admin/reels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newReelTitle.trim(),
+          videoUrl: newReelVideoUrl.trim(),
+          thumbnail: newReelThumbnail.trim() || undefined,
+          productName: newReelProductName.trim() || newReelTitle.trim(),
+          productUrl: newReelProductUrl.trim() || '/catalog',
+          price: newReelPrice.trim() || '₹49,000',
+          originalPrice: newReelOriginalPrice.trim() || undefined,
+          discount: newReelDiscount.trim() || '40% OFF',
+          rating: Number(newReelRating) || 5.0,
+          reviewCount: Number(newReelReviewCount) || 50,
+          featured: true,
+        }),
+      });
+      if (res.ok) {
+        showToast('Shoppable Video Reel published successfully!');
+        setNewReelTitle('');
+        setNewReelVideoUrl('');
+        setNewReelThumbnail('');
+        setNewReelProductName('');
+        setNewReelProductUrl('');
+        loadData();
+      } else {
+        const d = await res.json();
+        showToast(d.error || 'Failed to add Reel');
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmittingReel(false);
+    }
+  };
+
+  // Delete Shoppable Reel
+  const handleDeleteReel = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this Shoppable Video Reel?')) return;
+    try {
+      const res = await fetch(`/api/admin/reels?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        showToast('Shoppable Video Reel deleted.');
         loadData();
       }
     } catch (err) {
@@ -533,6 +656,24 @@ export default function AdminDashboardPage() {
           }`}
         >
           Variant Stock Management (§13-A)
+        </button>
+        <button
+          onClick={() => setActiveTab('SALONS')}
+          className={`pb-3 transition-colors flex items-center gap-1.5 ${
+            activeTab === 'SALONS' ? 'border-b-2 border-bronze text-bronze-dark font-bold' : 'text-charcoal/50 hover:text-charcoal'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-bronze" />
+          <span>Homepage Salon Cards ({salonCategories.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('REELS')}
+          className={`pb-3 transition-colors flex items-center gap-1.5 ${
+            activeTab === 'REELS' ? 'border-b-2 border-bronze text-bronze-dark font-bold' : 'text-charcoal/50 hover:text-charcoal'
+          }`}
+        >
+          <Film className="w-3.5 h-3.5 text-bronze" />
+          <span>Shoppable Reels ({reels.length})</span>
         </button>
         <button
           onClick={() => setActiveTab('COUPONS')}
@@ -1221,6 +1362,506 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* TAB: HOMEPAGE SALON CARDS MANAGEMENT */}
+      {activeTab === 'SALONS' && (
+        <div className="space-y-8">
+          {/* Add New Salon Card Form */}
+          <div className="bg-white border border-cream-border p-6 shadow-sm space-y-6">
+            <div className="border-b border-cream-border pb-3 flex justify-between items-center">
+              <div>
+                <h2 className="font-serif text-xl text-charcoal font-semibold flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-bronze" />
+                  <span>Add New Salon Card to Homepage Orbit</span>
+                </h2>
+                <p className="text-xs text-charcoal/60 mt-0.5">
+                  The cards added here appear in the 360° dynamic rotating carousel on the homepage with raw arched aesthetic shapes.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreateSalon} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Salon Name / Room Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={newSalonName}
+                    onChange={(e) => setNewSalonName(e.target.value)}
+                    placeholder="e.g. Royal Haveli Dining Sanctuary"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Catalog Category Filter *
+                  </label>
+                  <select
+                    value={newSalonCategory}
+                    onChange={(e) => setNewSalonCategory(e.target.value)}
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                  >
+                    <option value="Living">Living Room</option>
+                    <option value="Dining">Dining Sanctuaries</option>
+                    <option value="Bedroom">Master Bedroom</option>
+                    <option value="Executive">Executive Study</option>
+                    <option value="Bespoke">Bespoke Commissions</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                  High-Resolution Image URL *
+                </label>
+                <input
+                  type="url"
+                  value={newSalonImage}
+                  onChange={(e) => setNewSalonImage(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                  required
+                />
+                
+                {/* Quick Unsplash Preset Samples */}
+                <div className="flex flex-wrap gap-2 pt-2 items-center text-[10px]">
+                  <span className="text-charcoal/50">Quick Sample Presets:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewSalonName('Royal Penthouse Foyer');
+                      setNewSalonCategory('Living');
+                      setNewSalonImage('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85');
+                    }}
+                    className="px-2 py-0.5 bg-cream-subtle border border-cream-border hover:border-bronze rounded-xs"
+                  >
+                    Penthouse Foyer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewSalonName('Modernist Onyx Bar Lounge');
+                      setNewSalonCategory('Bespoke');
+                      setNewSalonImage('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85');
+                    }}
+                    className="px-2 py-0.5 bg-cream-subtle border border-cream-border hover:border-bronze rounded-xs"
+                  >
+                    Onyx Bar Lounge
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewSalonName('Heritage Courtyard Veranda');
+                      setNewSalonCategory('Dining');
+                      setNewSalonImage('https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1200&q=85');
+                    }}
+                    className="px-2 py-0.5 bg-cream-subtle border border-cream-border hover:border-bronze rounded-xs"
+                  >
+                    Courtyard Veranda
+                  </button>
+                </div>
+              </div>
+
+              {/* Image Preview */}
+              {newSalonImage && (
+                <div className="pt-2">
+                  <span className="text-[10px] uppercase text-charcoal/60 tracking-wider block mb-1">Live Card Preview:</span>
+                  <div className="w-32 h-44 rounded-t-[50px] rounded-b-xl overflow-hidden relative border border-bronze bg-charcoal shadow-md">
+                    <img src={newSalonImage} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-2">
+                      <p className="text-white text-[10px] font-serif font-medium leading-tight">{newSalonName || 'Salon Title'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmittingSalon}
+                  className="px-6 py-2.5 bg-charcoal hover:bg-bronze hover:text-charcoal text-cream text-xs uppercase tracking-wider font-semibold transition-all disabled:opacity-50 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>{isSubmittingSalon ? 'Adding...' : 'Add Salon Card to Carousel'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Current Active Salon Cards */}
+          <div className="bg-white border border-cream-border shadow-sm p-6 space-y-4">
+            <div className="flex justify-between items-center border-b border-cream-border pb-3">
+              <div>
+                <h3 className="font-serif text-lg text-charcoal font-semibold">
+                  Active Homepage Carousel Cards ({salonCategories.length})
+                </h3>
+                <p className="text-xs text-charcoal/60">
+                  These cards are rendered in the homepage continuous loop. Click Remove to delete any card.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pt-2">
+              {salonCategories.map((cat) => (
+                <div
+                  key={cat.id}
+                  className="group relative bg-charcoal border border-cream-border hover:border-bronze rounded-t-[50px] rounded-b-xl overflow-hidden shadow-xs flex flex-col justify-between"
+                >
+                  <div className="aspect-[3/4] relative overflow-hidden bg-charcoal">
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute top-2 right-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteSalon(cat.id)}
+                        className="w-7 h-7 rounded-full bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center shadow-md transition-transform hover:scale-110"
+                        title="Delete Card"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 bg-white text-center border-t border-cream-border">
+                    <p className="font-serif text-xs font-semibold text-charcoal truncate" title={cat.name}>
+                      {cat.name}
+                    </p>
+                    <span className="inline-block mt-0.5 px-2 py-0.5 bg-cream-subtle text-[9px] uppercase tracking-wider text-charcoal/60 rounded-xs">
+                      {cat.categoryParam}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 8: SHOPPABLE REELS & INSTAGRAM VIDEOS MANAGEMENT */}
+      {activeTab === 'REELS' && (
+        <div className="space-y-8">
+          {/* Add Reel Form */}
+          <div className="bg-white border border-cream-border p-6 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-cream-border pb-4 gap-2">
+              <div>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-bronze-dark font-semibold flex items-center gap-1.5">
+                  <Film className="w-3.5 h-3.5 text-bronze" />
+                  <span>Interactive Video Commerce &amp; Instagram Showcase</span>
+                </span>
+                <h2 className="font-serif text-2xl text-charcoal mt-0.5">
+                  Publish Shoppable Video / Instagram Reel
+                </h2>
+                <p className="text-xs text-charcoal/65 mt-0.5">
+                  Add high-converting 9:16 vertical video reels with shoppable product cards, star ratings, and direct acquisition links.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-300 text-xs text-emerald-900 font-medium self-start sm:self-auto rounded-xs">
+                <Play className="w-3.5 h-3.5 text-emerald-700 fill-emerald-700" />
+                <span>Supports Instagram URLs &amp; MP4 / WebM</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreateReel} className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Reel Video URL or Instagram Link *
+                  </label>
+                  <input
+                    type="url"
+                    value={newReelVideoUrl}
+                    onChange={(e) => setNewReelVideoUrl(e.target.value)}
+                    placeholder="https://www.instagram.com/reel/C.../ or https://...mp4"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                    required
+                  />
+                  <p className="text-[10px] text-charcoal/50 mt-1">
+                    Paste an Instagram Reel link (`instagram.com/reel/...`) or direct MP4/WebM video stream.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Video Title / Headline *
+                  </label>
+                  <input
+                    type="text"
+                    value={newReelTitle}
+                    onChange={(e) => setNewReelTitle(e.target.value)}
+                    placeholder="e.g. Lotus Sheesham Wood Bed with Drawer Storage"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Cover / Thumbnail Image URL
+                  </label>
+                  <input
+                    type="url"
+                    value={newReelThumbnail}
+                    onChange={(e) => setNewReelThumbnail(e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Associated Product Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newReelProductName}
+                    onChange={(e) => setNewReelProductName(e.target.value)}
+                    placeholder="e.g. Lotus King Size Bed (Honey Finish)"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Product Page Link / Slug
+                  </label>
+                  <input
+                    type="text"
+                    value={newReelProductUrl}
+                    onChange={(e) => setNewReelProductUrl(e.target.value)}
+                    placeholder="/catalog or /product/cararra-dining-table"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal focus:border-bronze focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Offer Price *
+                  </label>
+                  <input
+                    type="text"
+                    value={newReelPrice}
+                    onChange={(e) => setNewReelPrice(e.target.value)}
+                    placeholder="₹54,999"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal font-mono"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Original Price
+                  </label>
+                  <input
+                    type="text"
+                    value={newReelOriginalPrice}
+                    onChange={(e) => setNewReelOriginalPrice(e.target.value)}
+                    placeholder="₹89,999"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Discount Badge
+                  </label>
+                  <input
+                    type="text"
+                    value={newReelDiscount}
+                    onChange={(e) => setNewReelDiscount(e.target.value)}
+                    placeholder="45% OFF"
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Rating (1-5)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="5"
+                    value={newReelRating}
+                    onChange={(e) => setNewReelRating(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-charcoal font-semibold mb-1">
+                    Review Count
+                  </label>
+                  <input
+                    type="number"
+                    value={newReelReviewCount}
+                    onChange={(e) => setNewReelReviewCount(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-cream-subtle border border-cream-border text-xs text-charcoal"
+                  />
+                </div>
+              </div>
+
+              {/* Quick Sample Presets */}
+              <div className="flex flex-wrap gap-2 pt-1 items-center text-[10px]">
+                <span className="text-charcoal/60 font-medium">⚡ Quick 1-Click Samples:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewReelTitle('Shriyam Modern 6 Seater Sheesham Wood Dining Set');
+                    setNewReelVideoUrl('https://assets.mixkit.co/videos/preview/mixkit-hand-crafting-a-wooden-chair-42777-large.mp4');
+                    setNewReelThumbnail('https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=800&q=85');
+                    setNewReelProductName('Shriyam Modern 6 Seater Dining Set');
+                    setNewReelProductUrl('/catalog?category=Dining');
+                    setNewReelPrice('₹1,49,000');
+                    setNewReelOriginalPrice('₹2,45,000');
+                    setNewReelDiscount('40% OFF');
+                    setNewReelRating(5.0);
+                    setNewReelReviewCount(80);
+                  }}
+                  className="px-2 py-0.5 bg-cream-subtle border border-cream-border hover:border-bronze rounded-xs font-medium"
+                >
+                  Sheesham Dining Set
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewReelTitle('Shashwat 2 Seater Sheesham Wood Cane Swing Chair');
+                    setNewReelVideoUrl('https://assets.mixkit.co/videos/preview/mixkit-carpenter-measuring-a-wood-plank-42784-large.mp4');
+                    setNewReelThumbnail('https://images.unsplash.com/photo-1540518614846-7ede433c4550?auto=format&fit=crop&w=800&q=85');
+                    setNewReelProductName('Shashwat Swing Chair (Sand Grey)');
+                    setNewReelProductUrl('/catalog?category=Living');
+                    setNewReelPrice('₹96,000');
+                    setNewReelOriginalPrice('₹1,60,000');
+                    setNewReelDiscount('40% OFF');
+                    setNewReelRating(5.0);
+                    setNewReelReviewCount(229);
+                  }}
+                  className="px-2 py-0.5 bg-cream-subtle border border-cream-border hover:border-bronze rounded-xs font-medium"
+                >
+                  Cane Swing Chair
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewReelTitle('Albus L-Shape 5 Seater Right Aligned Sofa');
+                    setNewReelVideoUrl('https://assets.mixkit.co/videos/preview/mixkit-worker-measuring-a-plank-of-wood-with-a-tape-measure-42782-large.mp4');
+                    setNewReelThumbnail('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=85');
+                    setNewReelProductName('Albus L-Shape Sectional (Iris Blue)');
+                    setNewReelProductUrl('/catalog?category=Living');
+                    setNewReelPrice('₹56,999');
+                    setNewReelOriginalPrice('₹1,15,000');
+                    setNewReelDiscount('50% OFF');
+                    setNewReelRating(5.0);
+                    setNewReelReviewCount(115);
+                  }}
+                  className="px-2 py-0.5 bg-cream-subtle border border-cream-border hover:border-bronze rounded-xs font-medium"
+                >
+                  L-Shape Sofa
+                </button>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmittingReel}
+                  className="px-6 py-2.5 bg-charcoal hover:bg-bronze hover:text-charcoal text-cream text-xs uppercase tracking-wider font-semibold transition-all disabled:opacity-50 flex items-center gap-2 shadow-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>{isSubmittingReel ? 'Publishing Reel...' : 'Publish Reel to Storefront'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Active Reels Grid */}
+          <div className="bg-white border border-cream-border shadow-sm p-6 space-y-4">
+            <div className="flex justify-between items-center border-b border-cream-border pb-3">
+              <div>
+                <h3 className="font-serif text-lg text-charcoal font-semibold">
+                  Active Shoppable Video Reels ({reels.length})
+                </h3>
+                <p className="text-xs text-charcoal/60">
+                  These 9:16 vertical video cards are displayed in the homepage Shoppable Videos section.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 pt-2">
+              {reels.map((reel) => (
+                <div
+                  key={reel.id}
+                  className="group relative bg-[#FDFBF7] border border-cream-border hover:border-bronze rounded-2xl overflow-hidden shadow-xs flex flex-col justify-between transition-all"
+                >
+                  <div className="aspect-[9/16] relative overflow-hidden bg-charcoal">
+                    {reel.thumbnail ? (
+                      <img src={reel.thumbnail} alt={reel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-charcoal text-cream/40">
+                        <Play className="w-8 h-8" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+
+                    {/* Top Badges */}
+                    <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 bg-black/60 backdrop-blur-md text-[9px] uppercase tracking-wider text-amber-300 font-bold rounded-full flex items-center gap-1 border border-amber-300/30">
+                        <Play className="w-2.5 h-2.5 fill-amber-300" />
+                        <span>Reel</span>
+                      </span>
+                    </div>
+
+                    {/* Delete button */}
+                    <div className="absolute top-2 right-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteReel(reel.id)}
+                        className="w-7 h-7 rounded-full bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center shadow-md transition-transform hover:scale-110"
+                        title="Delete Reel"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Overlay info */}
+                    <div className="absolute bottom-2 left-2 right-2 text-white text-[11px] leading-tight space-y-0.5">
+                      <p className="font-serif font-medium line-clamp-2">{reel.title}</p>
+                      <div className="flex items-center gap-1.5 text-[10px]">
+                        <span className="font-bold text-amber-400">{reel.price}</span>
+                        {reel.discount && (
+                          <span className="text-[9px] text-emerald-400 font-semibold">{reel.discount}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white space-y-1 border-t border-cream-border">
+                    <p className="text-[11px] font-serif font-medium text-charcoal truncate" title={reel.productName || reel.title}>
+                      {reel.productName || reel.title}
+                    </p>
+                    <div className="flex items-center justify-between text-[10px] text-charcoal/60">
+                      <div className="flex items-center text-amber-500">
+                        {'★'.repeat(Math.round(reel.rating || 5))}
+                        <span className="text-charcoal/50 ml-1">({reel.reviewCount || 0})</span>
+                      </div>
+                      <span className="font-mono font-bold text-charcoal">{reel.price}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

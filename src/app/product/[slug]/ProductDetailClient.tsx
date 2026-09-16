@@ -17,6 +17,8 @@ import {
   Package,
 } from 'lucide-react';
 
+import { parseProductImages } from '@/lib/products-fallback';
+
 interface Variant {
   id: string;
   sku: string;
@@ -58,9 +60,21 @@ interface ProductDetailProps {
 export default function ProductDetailClient({ product }: ProductDetailProps) {
   const { addItem, setIsCartOpen } = useCart();
 
-  const imageList: string[] = JSON.parse(product.images);
+  const imageList: string[] = parseProductImages(product.images);
   const [selectedImage, setSelectedImage] = useState<string>(imageList[0]);
-  const [selectedVariant, setSelectedVariant] = useState<Variant>(product.variants[0]);
+  
+  const fallbackVariant: Variant = {
+    id: 'default-v',
+    sku: product.slug,
+    colorName: 'Artisan Bespoke',
+    colorHex: '#8C6D46',
+    material: 'Full-Grain Material & Hardwood',
+    priceOverride: null,
+    stock: 5,
+  };
+  
+  const variantsList = (product.variants && product.variants.length > 0) ? product.variants : [fallbackVariant];
+  const [selectedVariant, setSelectedVariant] = useState<Variant>(variantsList[0]);
   const [quantity, setQuantity] = useState(1);
   const [pincode, setPincode] = useState('');
   const [pincodeStatus, setPincodeStatus] = useState<string | null>(null);
@@ -75,8 +89,8 @@ export default function ProductDetailClient({ product }: ProductDetailProps) {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  const currentPrice = selectedVariant.priceOverride || product.basePrice;
-  const isOutOfStock = selectedVariant.stock <= 0;
+  const currentPrice = selectedVariant?.priceOverride || product.basePrice;
+  const isOutOfStock = (selectedVariant?.stock ?? 0) <= 0;
 
   const handleVariantSelect = (variant: Variant) => {
     setSelectedVariant(variant);
@@ -383,33 +397,39 @@ export default function ProductDetailClient({ product }: ProductDetailProps) {
             <h2 className="font-serif text-2xl sm:text-3xl text-charcoal mt-1">Verified Patrons</h2>
           </div>
           <p className="text-xs text-charcoal/60">
-            {product.reviews.length} Verified Architectural Reviews
+            {(product.reviews || []).length} Verified Architectural Reviews
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {product.reviews.map((rev) => (
-            <div key={rev.id} className="p-5 bg-white border border-cream-border space-y-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-serif text-sm font-semibold text-charcoal">{rev.authorName}</p>
-                  {rev.verifiedPurchase && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium">
-                      <Check className="w-3 h-3" />
-                      <span>Verified Acquisition</span>
-                    </span>
-                  )}
+        {(product.reviews || []).length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {(product.reviews || []).map((rev) => (
+              <div key={rev.id} className="p-5 bg-white border border-cream-border space-y-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-serif text-sm font-semibold text-charcoal">{rev.authorName}</p>
+                    {rev.verifiedPurchase && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium">
+                        <Check className="w-3 h-3" />
+                        <span>Verified Acquisition</span>
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex text-amber-500 text-xs">
+                    {'★'.repeat(rev.rating)}
+                  </div>
                 </div>
-                <div className="flex text-amber-500 text-xs">
-                  {'★'.repeat(rev.rating)}
-                </div>
+                <p className="text-xs text-charcoal/75 leading-relaxed font-light italic">
+                  &ldquo;{rev.comment}&rdquo;
+                </p>
               </div>
-              <p className="text-xs text-charcoal/75 leading-relaxed font-light italic">
-                &ldquo;{rev.comment}&rdquo;
-              </p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-charcoal/60 italic">
+            Be the first patron to submit an architectural review for this bespoke piece.
+          </p>
+        )}
 
         {/* Submit Review */}
         <div className="bg-cream-subtle p-6 border border-cream-border max-w-xl">

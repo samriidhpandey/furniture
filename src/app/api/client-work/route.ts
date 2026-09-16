@@ -98,11 +98,8 @@ export async function GET() {
 
     return NextResponse.json({ projects, success: true });
   } catch (error: any) {
-    console.error('Error fetching client projects:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to fetch client projects', projects: initialCuratedProjects },
-      { status: 500 }
-    );
+    console.warn('DB client projects fetch failed, returning initial curated projects:', error);
+    return NextResponse.json({ projects: initialCuratedProjects, success: true });
   }
 }
 

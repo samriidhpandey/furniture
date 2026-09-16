@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { FALLBACK_PRODUCTS } from '@/lib/products-fallback';
 
 export async function GET() {
   try {
@@ -31,8 +32,24 @@ export async function GET() {
 
     return NextResponse.json({ products, lowStockVariants });
   } catch (e: any) {
-    console.error('Inventory fetch error', e);
-    return NextResponse.json({ error: e.message || 'Failed to fetch inventory' }, { status: 500 });
+    console.warn('Inventory fetch error, using fallback products:', e);
+    const lowStockVariants = [];
+    for (const p of FALLBACK_PRODUCTS) {
+      for (const v of p.variants) {
+        if (v.stock <= 2) {
+          lowStockVariants.push({
+            productId: p.id,
+            productName: p.name,
+            variantId: v.id,
+            sku: v.sku,
+            colorName: v.colorName,
+            material: v.material,
+            stock: v.stock,
+          });
+        }
+      }
+    }
+    return NextResponse.json({ products: FALLBACK_PRODUCTS, lowStockVariants });
   }
 }
 
