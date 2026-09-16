@@ -361,6 +361,17 @@ export function findProductBySlug(slug: string): FullProduct | undefined {
   );
 }
 
+export function findVariantById(variantId: string): { product: FullProduct; variant: any } | undefined {
+  if (!variantId) return undefined;
+  for (const p of FALLBACK_PRODUCTS) {
+    const v = p.variants?.find((item) => item.id === variantId || item.sku === variantId);
+    if (v) {
+      return { product: p, variant: v };
+    }
+  }
+  return undefined;
+}
+
 export function parseProductImages(imagesRaw: any): string[] {
   if (!imagesRaw) {
     return ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80'];
@@ -379,3 +390,5 @@ export function parseProductImages(imagesRaw: any): string[] {
   }
   return ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80'];
 }
+
+

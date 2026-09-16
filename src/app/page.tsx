@@ -13,30 +13,12 @@ import HomeVisitBookingSection from '@/components/home/HomeVisitBookingSection';
 import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/ui/ScrollAnimation';
 import OrnateDivider, { OrnateCardCorners, OrnateCardFrame } from '@/components/ui/OrnateDivider';
 
+import { getSafeProducts } from '@/lib/safe-query';
+
 export const revalidate = 60; // Technical SEO ISR
 
 export default async function HomePage() {
-  let allProducts: ProductItem[] = [];
-
-  try {
-    const dbProducts = await prisma.product.findMany({
-      include: {
-        variants: true,
-        reviews: { where: { status: 'APPROVED' } },
-      },
-      orderBy: { basePrice: 'desc' },
-    });
-
-    if (dbProducts && dbProducts.length > 0) {
-      allProducts = dbProducts as unknown as ProductItem[];
-    } else {
-      allProducts = FALLBACK_PRODUCTS;
-    }
-  } catch (err) {
-    console.warn('Prisma fetch failed, using curated luxury fallback catalog:', err);
-    allProducts = FALLBACK_PRODUCTS;
-  }
-
+  const allProducts = await getSafeProducts();
   const featuredProducts = allProducts.filter((p) => Boolean(p.featured)).slice(0, 4);
 
   return (

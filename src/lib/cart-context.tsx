@@ -25,6 +25,7 @@ export interface AppliedCoupon {
 
 interface CartContextType {
   items: CartItem[];
+  isLoaded: boolean;
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
@@ -45,6 +46,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load cart from localStorage
   useEffect(() => {
@@ -59,6 +61,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (e) {
       console.error('Failed to load cart', e);
+    } finally {
+      setIsLoaded(true);
     }
   }, []);
 
@@ -155,6 +159,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     <CartContext.Provider
       value={{
         items,
+        isLoaded,
         addItem,
         removeItem,
         updateQuantity,

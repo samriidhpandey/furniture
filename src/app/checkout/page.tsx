@@ -38,7 +38,7 @@ const INDIAN_STATES = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, discount, total, appliedCoupon, clearCart } = useCart();
+  const { items, isLoaded, subtotal, discount, total, appliedCoupon, clearCart } = useCart();
   const { user } = useAuth();
 
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -78,6 +78,19 @@ export default function CheckoutPage() {
 
   // Calculate live GST breakdown based on state (§21-B)
   const gst = calculateGst(subtotal, discount, state);
+
+  // If cart is still reading from storage, show fast luxury skeleton
+  if (!isLoaded) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-pulse space-y-8">
+        <div className="h-8 w-64 bg-[#D8CEBF]/40 rounded" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-7 h-96 bg-[#D8CEBF]/20 rounded-xl" />
+          <div className="lg:col-span-5 h-96 bg-[#D8CEBF]/20 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

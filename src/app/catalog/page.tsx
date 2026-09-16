@@ -1,10 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import prisma from '@/lib/db';
 import { formatINR } from '@/lib/gst';
 import { SlidersHorizontal, ArrowRight, Check } from 'lucide-react';
 import CircularProductShowcase from '@/components/home/CircularProductShowcase';
 import { FALLBACK_PRODUCTS, parseProductImages } from '@/lib/products-fallback';
+import { getSafeProducts } from '@/lib/safe-query';
 
 export const revalidate = 60;
 
@@ -21,81 +21,42 @@ export default async function CatalogPage({ searchParams }: CatalogProps) {
   const categoryFilter = searchParams?.category;
   const materialFilter = searchParams?.material;
   const sortOption = searchParams?.sort || 'featured';
-  const searchQuery = searchParams?.q;
+  const searchQuery = searchParams?.q?.toLowerCase();
 
-  let allMasterpieces: any[] = [];
-  let products: any[] = [];
+  const allMasterpieces = await getSafeProducts();
+  let products = [...allMasterpieces];
 
-  try {
-    // Fetch all products for the 360 rotunda
-    allMasterpieces = await prisma.product.findMany({
-      include: {
-        variants: true,
-        reviews: { where: { status: 'APPROVED' } },
-      },
-      orderBy: { basePrice: 'desc' },
-    });
-
-    // Build Prisma where query for the filtered grid below
-    const where: any = {};
-    if (categoryFilter && categoryFilter !== 'All') {
-      where.category = categoryFilter;
-    }
-    if (searchQuery) {
-      where.OR = [
-        { name: { contains: searchQuery } },
-        { tagline: { contains: searchQuery } },
-        { description: { contains: searchQuery } },
-      ];
-    }
-
-    // Determine ordering
-    let orderBy: any = { featured: 'desc' };
-    if (sortOption === 'price-asc') orderBy = { basePrice: 'asc' };
-    if (sortOption === 'price-desc') orderBy = { basePrice: 'desc' };
-    if (sortOption === 'name') orderBy = { name: 'asc' };
-
-    products = await prisma.product.findMany({
-      where,
-      orderBy,
-      include: {
-        variants: true,
-        reviews: { where: { status: 'APPROVED' } },
-      },
-    });
-  } catch (err) {
-    // Graceful fallback for serverless / Vercel SQLite environments
-    allMasterpieces = FALLBACK_PRODUCTS;
-    products = FALLBACK_PRODUCTS;
-  }
-
-  if (!products || products.length === 0) {
-    products = FALLBACK_PRODUCTS;
-  }
-  if (!allMasterpieces || allMasterpieces.length === 0) {
-    allMasterpieces = FALLBACK_PRODUCTS;
-  }
-
-  // Fallback in-memory filtering if DB wasn't used or for fallback products
+  // In-memory instant filtering
   if (categoryFilter && categoryFilter !== 'All') {
-    products = products.filter((p) => (p.category || '').toLowerCase() === categoryFilter.toLowerCase());
+    products = products.filter((p) => p.category === categoryFilter);
   }
 
   if (searchQuery) {
-    const q = searchQuery.toLowerCase();
     products = products.filter(
       (p) =>
-        (p.name || '').toLowerCase().includes(q) ||
-        (p.tagline || '').toLowerCase().includes(q) ||
-        (p.description || '').toLowerCase().includes(q)
+        p.name?.toLowerCase().includes(searchQuery) ||
+        p.tagline?.toLowerCase().includes(searchQuery) ||
+        p.description?.toLowerCase().includes(searchQuery)
     );
   }
 
-  // Client-side material filtering if specified
   if (materialFilter && materialFilter !== 'All') {
     products = products.filter((p) =>
-      (p.variants || []).some((v: any) => (v.material || '').toLowerCase().includes(materialFilter.toLowerCase()))
+      p.variants?.some((v) =>
+        v.material?.toLowerCase().includes(materialFilter.toLowerCase())
+      )
     );
+  }
+
+  // Sorting
+  if (sortOption === 'price-asc') {
+    products.sort((a, b) => a.basePrice - b.basePrice);
+  } else if (sortOption === 'price-desc') {
+    products.sort((a, b) => b.basePrice - a.basePrice);
+  } else if (sortOption === 'name') {
+    products.sort((a, b) => a.name.localeCompare(b.name));
+  } else {
+    products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   }
 
   // Sorting
